@@ -62,19 +62,23 @@ WHERE id = 'CcU-2938';
 -- Id	108B1D1D-5B23-A76C-55EF-C568E49A99DD -- credit_card_id	CcU-9999 -- company_id	b-9999 -- user_id	9999 -- lat	829.999 -- longitude	-117.999 -- amount	111.11 -- declined	0
 
 
-SET FOREIGN_KEY_CHECKS=0;
--- desactiva la foreign key para que yo pueda agregar los datos
+-- inseriro los datos
 
-INSERT INTO transaction (Id, credit_card_id, company_id, user_id, lat, longitude, amount, declined)
+INSERT INTO credit_card (Id, iban, pin, cvv, expiring_date, fecha_actual) -- ok datos de credit_card
+VALUES ('CcU-9999', '0000','000','000','000', '01/01/01'); 
+
+INSERT INTO company (id, company_name, phone, email, country, website) -- ok datos de company
+VALUES ('b-9999', '0000','000','000','000', '000'); 
+
+INSERT INTO user (id, name, surname, phone, email, birth_date, country, city, postal_code, address) -- ok datos de user
+VALUES ('9999', '0000','000','000','000', '000','000','000','000','000'); 
+
+INSERT INTO transaction (Id, credit_card_id, company_id, user_id, lat, longitude, amount, declined) -- ok datos de transaction
 VALUES ("108B1D1D-5B23-A76C-55EF-C568E49A99DD",'CcU-9999', 'b-9999', '9999', '829.999', '-117.999', '111.11', '0');
 
-SET FOREIGN_KEY_CHECKS=1;
-
--- activa otra vez la foreign key
-
-SELECT * 
-FROM transaction 
-WHERE credit_card_id = 'CcU-9999';
+select *
+from transaction
+where id="108B1D1D-5B23-A76C-55EF-C568E49A99DD";
 
 
 -- - Exercici 4
@@ -189,7 +193,23 @@ ALTER TABLE transaction ADD CONSTRAINT fk_usertransaction FOREIGN KEY ( user_id 
 
 ALTER TABLE user DROP CONSTRAINT user_ibfk_1;
 
--- 10 miramos una vez mas el DIAGRAMA en database -> Reverse Engineer -> continue -> y ya está todo perfecto
+-- 10 ultimas modificaciones
+
+ALTER TABLE company DROP COLUMN website;
+ALTER TABLE user 
+RENAME COLUMN email TO personal_email;
+RENAME TABLE user to data_user;
+
+-- 11 miramos una vez mas el DIAGRAMA en database -> Reverse Engineer -> continue -> y ya está todo perfecto
+
+
+
+
+
+
+
+
+
 
 
 
@@ -201,9 +221,9 @@ ALTER TABLE user DROP CONSTRAINT user_ibfk_1;
 -- ID de la transacció -- Nom de l'usuari/ària -- Cognom de l'usuari/ària -- IBAN de la targeta de crèdit usada. -- Nom de la companyia de la transacció realitzada. -- Assegura't d'incloure informació rellevant de totes dues taules i utilitza àlies per a canviar de nom columnes segons sigui necessari. -- Mostra els resultats de la vista, ordena els resultats de manera descendent en funció de la variable ID de transaction.
 
 CREATE VIEW InformeTecnico AS
-	select transaction.id as id_transaction , user.name as Nombre_de_usuario, user.surname as Apelido,credit_card.iban,company.company_name as 		nombre_de_la_empresa
+	select transaction.id as id_transaction, data_user.name as Nombre_de_usuario, data_user.surname as Apelido,credit_card.iban,company.company_name as nombre_de_la_empresa
 	from transaction
-	join user on user.id = transaction.user_id
+	join data_user on data_user.id = transaction.user_id
 	join company on company.id = transaction.company_id
 	join credit_card on credit_card.id = transaction.credit_card_id;
     
