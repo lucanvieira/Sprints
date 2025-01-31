@@ -252,9 +252,10 @@ ALTER TABLE transactions_products ADD CONSTRAINT fk_prodtrans FOREIGN KEY ( prod
 -- Necessitem conèixer el nombre de vegades que s'ha venut cada producte.
 -- CONSIDERAR EL DECLINED
 
-SELECT id, product_name, count(declined) as cantidad_dcompras
+SELECT product_id, product_name, count(transactions.declined) as cantidad_dcompras
 FROM PRODUCTS
 JOIN transactions_products ON transactions_products.product_id = PRODUCTs.id
+join transactions on transactions.id = transactions_products.transaction_id
 where declined = 0
 group by 1,2
 order by 1
@@ -266,4 +267,7 @@ order by 1
 
 
 ALTER TABLE Status_transac ADD CONSTRAINT fk_transsatatus FOREIGN KEY ( card_id ) REFERENCES credit_cards (id);
-
+alter table transactions_products drop column user_id;
+alter table transactions_products drop column declined;
+alter table Status_transac add constraint PRIMARY KEY (card_id, status_tarjetas);
+alter table transactions_products add constraint PRIMARY KEY (transaction_id, product_id);
